@@ -1,0 +1,3 @@
+usr/sbin/mongod
+usr/bin/thp-disable.sh
+etc/default/mongod

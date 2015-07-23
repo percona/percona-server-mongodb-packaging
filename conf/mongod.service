@@ -1,0 +1,15 @@
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=time-sync.target network.target
+
+[Service]
+User=mongod
+Group=mongod
+PermissionsStartOnly=true
+EnvironmentFile=/etc/sysconfig/mongod
+ExecStartPre=/usr/bin/percona-server-mongodb-helper.sh
+ExecStart=/usr/sbin/mongod $OPTIONS run
+PIDFile=/var/run/mongod.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+usr/bin/bsondump
+usr/bin/mongostat
+usr/bin/mongofiles
+usr/bin/mongoexport
+usr/bin/mongoimport
+usr/bin/mongorestore
+usr/bin/mongodump
+usr/bin/mongotop
+usr/bin/mongooplog

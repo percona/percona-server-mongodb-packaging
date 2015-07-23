@@ -1,0 +1,66 @@
+Source: percona-server-mongodb
+Maintainer: Alexey Bychko <alexey.bychko@percona.com>
+Section: database
+Priority: extra
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9),
+               dh-systemd, 
+
+Package: percona-server-mongodb
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, percona-tokumxse-mongos, percona-tokumxse-shell, percona-tokumxse-server, percona-tokumxse-tools
+Description: This metapackage will install the mongo shell, import/export tools, other client utilities, server software, default configuration, and init.d scripts.
+ This package contains high-performance MongoDB replacement from Percona - TokuMXSE.
+ TokuMXSE is built for scalability, performance and high availability, scaling from single server deployments to large, complex multi-site architectures. 
+ By leveraging in-memory computing, TokuMXSE provides high performance for both reads and writes. 
+ TokuMXSE's native replication and automated failover enable enterprise-grade reliability and operational flexibility.
+ .
+ TokuMXSE is an open-source database used by companies of all sizes, across all industries and for a wide variety of applications. 
+ It is an agile database that allows schemas to change quickly as applications evolve, while still providing the functionality developers expect from traditional databases,
+ such as secondary indexes, a full query language and strict consistency.
+ .
+ TokuMXSE has a rich client ecosystem including hadoop integration, officially supported drivers for 10 programming languages and environments, as well as 40 drivers supported by the user community.
+ .
+ TokuMXSE features:
+ * JSON Data Model with Dynamic Schemas
+ * Auto-Sharding for Horizontal Scalability
+ * Built-In Replication for High Availability
+ * Rich Secondary Indexes, including geospatial
+ * TTL indexes
+ * Text Search
+ * Aggregation Framework & Native MapReduce
+
+Package: percona-server-mongodb-mongos
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: This package contains mongos - the TokuMXSE sharded cluster query router
+ TokuMXSE is a drop-in high-performance replacement for MongoDB from Percona
+
+Package: percona-server-mongodb-server
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: This package contains the TokuMXSE server software, default configuration files and init.d scripts
+ TokuMXSE is a drop-in high-performance replacement for MongoDB from Percona
+
+Package: percona-server-mongodb-shell
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: This package contains the TokuMXSE shell
+ TokuMXSE is a drop-in high-performance replacement for MongoDB from Percona
+
+Package: percona-server-mongodb-tools
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Mongo tools for high-performance MongoDB fork from Percona
+ TokuMXSE is a drop-in high-performance replacement for MongoDB from Percona
+
+Package: percona-server-mongodb-dbg
+Architecture: any
+Section: debug
+Depends: percona-server-mondodb (= ${binary:Version}), ${misc:Depends}
+Description: Debugging package for Percona Server for MongoDB
+ Percona Server for MongoDB is a drop-in high-performance replacement for MongoDB from Percona
+
+
+
+ 

@@ -1,0 +1,69 @@
+#!/usr/bin/make -f
+#
+export DH_VERBOSE=1
+export DEB_BUILD_HARDENING=1
+export NJOBS=$(shell grep -c processor /proc/cpuinfo)
+export MXSE_TARGETS=mongod mongos mongo
+export TOKUMXSRC=$(shell pwd)
+export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog
+#
+clean:
+	rm -fr $(TOKUMXSRC)/bin
+	rm -fr $(TOKUMXSRC)/src/third_party/ft-index/ft-build
+	rm -fr $(TOKUMXSRC)/src/third_party/tokuft
+	scons -c --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) CPPPATH=$(TOKUMXSRC)/src/third_party/tokuft/include \
+	LIBPATH=$(TOKUMXSRC)/src/third_party/tokuft/lib --tokuft --rocksdb --wiredtiger=on --allocator=jemalloc $(MXSE_TARGETS)
+	rm -fr build
+	find $(TOKUMXSRC) -name '*.pyc' -delete
+		
+ft-index-configure: 
+	mkdir -p $(TOKUMXSRC)/src/third_party/ft-index/ft-build
+	cd $(TOKUMXSRC)/src/third_party/ft-index/ft-build
+	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF \
+	-DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF \
+	-DCMAKE_INSTALL_PREFIX=$(TOKUMXSRC)/src/third_party/ft-index/ft-build/install $(TOKUMXSRC)/src/third_party/ft-index
+
+ft-index: ft-index-configure
+	cd $(TOKUMXSRC)/src/third_party/ft-index/ft-build
+	make -j$(NJOBS) install 
+	mv $(TOKUMXSRC)/src/third_party/ft-index/ft-build/install $(TOKUMXSRC)/src/third_party/tokuft
+	rm -rfv $(TOKUMXSRC)/src/third_party/ft-index/ft-build
+	
+tokumxse: ft-index
+	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) CPPPATH=$(TOKUMXSRC)/src/third_party/tokuft/include \
+	LIBPATH=$(TOKUMXSRC)/src/third_party/tokuft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(MXSE_TARGETS)
+
+compile-mongo-tools:
+	rm -rf $(TOKUMXSRC)/mongo-tools/vendor/pkg
+	mkdir -p $(TOKUMXSRC)/bin
+	for tool in $(MONGOTOOLS) ; do \
+		go build -a -x -o $(TOKUMXSRC)/bin/$$tool $(TOKUMXSRC)/mongo-tools/$$tool/main/$$tool.go ; \
+	done
+
+build: compile-mongo-tools tokumxse
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+	cp -av mongos debian/percona-server-mongodb-mongos/usr/bin
+	cp -av mongo debian/percona-server-mongodb-shell/usr/bin
+	cp -av mongod debian/percona-server-mongodb-server/usr/sbin
+	cp -av debian/percona-server-mongodb-helper.sh debian/percona-server-mongodb-server/usr/bin
+	cp -av debian/mongod.conf debian/percona-server-mongodb-server/etc/mongod.conf
+	cp -av $(TOKUMXSRC)/bin/* debian/percona-server-mongodb-tools/usr/bin
+	dh_systemd_enable --name=mongod
+	dh_installinit -a --name=mongod
+	dh_installman -a
+	dh_installdocs -a
+
+binary: 
+	dh_systemd_start
+	dh_strip -a --dbg-package=percona-server-mongodb-dbg
+	dh_lintian
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
