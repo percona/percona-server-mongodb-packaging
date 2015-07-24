@@ -152,7 +152,7 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %defattr(-,root,root,-)
 %{_sbindir}/mongod
 %{_mandir}/man1/mongod.1.gz
-%{_bindir}/tokumxse-helper.sh
+%{_bindir}/percona-server-mongodb-helper.sh
 %if 0%{?rhel} >= 7
 %{_unitdir}/mongod.service
 %else

@@ -9,7 +9,7 @@
 # pidfile: /var/run/mongod.pid
 
 . /etc/rc.d/init.d/functions
-. /usr/bin/tokumxse-helper.sh
+. /usr/bin/percona-server-mongodb-helper.sh
 
 # things from mongod.conf get there by mongod reading it
 
