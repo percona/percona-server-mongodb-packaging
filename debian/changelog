@@ -1,4 +1,4 @@
-percona-server-mondodb (3.0.4) UNRELEASED; urgency=medium
+percona-server-mongodb (3.0.4) UNRELEASED; urgency=medium
 
   * Initial release. (Closes: #BLD-285)
 
