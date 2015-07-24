@@ -12,7 +12,7 @@ Source0:        @@SOURCE_TARBALL@@
 Source1:        mongod.conf
 Source2:        mongod.service
 Source3:        mongod.default
-Source4:        tokumxse-helper.sh
+Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
