@@ -21,6 +21,7 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, scons, openssl-devel
 %if 0%{?rhel} > 5
 BuildRequires: golang
+BuildRequires: librocksdb-devel
 %endif
 
 Requires: percona-server-mongodb-mongos = %{version}-%{release}  
