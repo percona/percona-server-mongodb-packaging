@@ -4,7 +4,7 @@ Section: database
 Priority: extra
 Standards-Version: 3.9.2
 Build-Depends: debhelper (>= 9),
-               dh-systemd, 
+               dh-systemd, librocksdb-dev
 
 Package: percona-server-mongodb
 Architecture: any
