@@ -18,7 +18,8 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 
 
-BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, scons, openssl-devel
+BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel
+BuildRequires: /usr/bin/scons
 %if 0%{?rhel} > 5
 BuildRequires: golang
 BuildRequires: librocksdb-devel
