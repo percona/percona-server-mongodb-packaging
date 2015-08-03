@@ -90,7 +90,7 @@ if test "x$ENABLE_MONGOD" != "xyes"; then
 fi
 
 . /lib/lsb/init-functions
-. /usr/bin/tokumxse-helper.sh
+. /usr/bin/percona-server-mongodb-helper.sh
 
 STARTTIME=1
 DIETIME=10                   # Time to wait for the server to die, in seconds
