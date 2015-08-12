@@ -90,14 +90,14 @@ for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore m
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
 done
 
-mkdir -p $RPM_BUILD_DIR/%{src_dir}/src/third_party/ft-index/ft-build
-cd $RPM_BUILD_DIR/%{src_dir}/src/third_party/ft-index/ft-build
+mkdir -p $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/ft-build
+cd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/ft-build
 cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=$PWD/install ..
 make %{?_smp_mflags} install
 
 # Move the installed fractal tree to appropriate place and remove source dir
 mv $PWD/install $RPM_BUILD_DIR/%{src_dir}/src/third_party/tokuft
-rm -rf $RPM_BUILD_DIR/%{src_dir}/src/third_party/ft-index
+rm -rf $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
 #
 # Build MXSE with SCons
 
