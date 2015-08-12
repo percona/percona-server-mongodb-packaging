@@ -90,24 +90,24 @@ for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore m
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
 done
 
-mkdir -p $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/ft-build
-cd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/ft-build
+mkdir -p $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/pft-build
+cd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/pft-build
 cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=$PWD/install ..
 make %{?_smp_mflags} install
 
 # Move the installed fractal tree to appropriate place and remove source dir
-mv $PWD/install $RPM_BUILD_DIR/%{src_dir}/src/third_party/tokuft
+mv $PWD/install $RPM_BUILD_DIR/%{src_dir}/src/third_party/pft
 rm -rf $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
 #
 # Build MXSE with SCons
 
 cd $RPM_BUILD_DIR/%{src_dir}
 
-export MXSE_TARGETS="mongod mongos mongo"
+export PSM_TARGETS="mongod mongos mongo"
 
 scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} %{?_smp_mflags} \
-CPPPATH=$PWD/src/third_party/tokuft/include LIBPATH=$PWD/src/third_party/tokuft/lib \
---tokuft --rocksdb --wiredtiger --allocator=jemalloc $MXSE_TARGETS
+CPPPATH=$PWD/src/third_party/pft/include LIBPATH=$PWD/src/third_party/pft/lib \
+--tokuft --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
 
 %install
 #

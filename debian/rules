@@ -9,29 +9,29 @@ export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongores
 #
 clean:
 	rm -fr $(PSMSRC)/bin
-	rm -fr $(PSMSRC)/src/third_party/ft-index/ft-build
-	rm -fr $(PSMSRC)/src/third_party/tokuft
-	scons -c --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) CPPPATH=$(PSMSRC)/src/third_party/tokuft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/tokuft/lib --tokuft --rocksdb --wiredtiger=on --allocator=jemalloc $(PSM_TARGETS)
+	rm -fr $(PSMSRC)/src/third_party/PerconaFT/pft-build
+	rm -fr $(PSMSRC)/src/third_party/pft
+	scons -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) CPPPATH=$(PSMSRC)/src/third_party/pft/include \
+	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
 		
-ft-index-configure: 
-	mkdir -p $(PSMSRC)/src/third_party/ft-index/ft-build
-	cd $(PSMSRC)/src/third_party/ft-index/ft-build
+PerconaFT-configure: 
+	mkdir -p $(PSMSRC)/src/third_party/PerconaFT/pft-build
+	cd $(PSMSRC)/src/third_party/PerconaFT/pft-build
 	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF \
 	-DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF \
-	-DCMAKE_INSTALL_PREFIX=$(PSMSRC)/src/third_party/ft-index/ft-build/install $(PSMSRC)/src/third_party/ft-index
+	-DCMAKE_INSTALL_PREFIX=$(PSMSRC)/src/third_party/PerconaFT/pft-build/install $(PSMSRC)/src/third_party/PerconaFT
 
-ft-index: ft-index-configure
-	cd $(PSMSRC)/src/third_party/ft-index/ft-build
+PerconaFT: PerconaFT-configure
+	cd $(PSMSRC)/src/third_party/PerconaFT/pft-build
 	make -j$(NJOBS) install 
-	mv $(PSMSRC)/src/third_party/ft-index/ft-build/install $(PSMSRC)/src/third_party/tokuft
-	rm -rfv $(PSMSRC)/src/third_party/ft-index/ft-build
+	mv $(PSMSRC)/src/third_party/PerconaFT/pft-build/install $(PSMSRC)/src/third_party/pft
+	rm -rfv $(PSMSRC)/src/third_party/PerconaFT/pft-build
 	
-percona-server-mongodb: ft-index
-	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) CPPPATH=$(PSMSRC)/src/third_party/tokuft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/tokuft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+percona-server-mongodb: PerconaFT
+	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) CPPPATH=$(PSMSRC)/src/third_party/pft/include \
+	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
