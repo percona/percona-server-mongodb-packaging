@@ -18,7 +18,7 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 
 
-BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel
+BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
 BuildRequires: /usr/bin/scons
 %if 0%{?rhel} > 5
 BuildRequires: golang
@@ -106,7 +106,7 @@ cd $RPM_BUILD_DIR/%{src_dir}
 export PSM_TARGETS="mongod mongos mongo"
 
 scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} %{?_smp_mflags} \
-CPPPATH=$PWD/src/third_party/pft/include LIBPATH=$PWD/src/third_party/pft/lib \
+--use-sasl-client CPPPATH=$PWD/src/third_party/pft/include LIBPATH=$PWD/src/third_party/pft/lib \
 --tokuft --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
 
 %install
