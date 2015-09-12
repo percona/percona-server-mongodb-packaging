@@ -12,7 +12,7 @@ clean:
 	rm -fr $(PSMSRC)/src/third_party/PerconaFT/pft-build
 	rm -fr $(PSMSRC)/src/third_party/pft
 	scons -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(PSMSRC)/src/third_party/pft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
 		
@@ -31,7 +31,7 @@ PerconaFT: PerconaFT-configure
 	
 percona-server-mongodb: PerconaFT
 	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(PSMSRC)/src/third_party/pft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --tokuft --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg

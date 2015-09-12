@@ -107,7 +107,7 @@ export PSM_TARGETS="mongod mongos mongo"
 
 scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} %{?_smp_mflags} \
 --use-sasl-client CPPPATH=$PWD/src/third_party/pft/include LIBPATH=$PWD/src/third_party/pft/lib \
---tokuft --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
+--PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
 
 %install
 #
