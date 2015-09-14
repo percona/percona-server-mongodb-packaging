@@ -17,26 +17,23 @@ clean:
 	find $(PSMSRC) -name '*.pyc' -delete
 		
 PerconaFT: 
-	pushd $(PSMSRC)/src/third_party/PerconaFT
+	cd $(PSMSRC)/src/third_party/PerconaFT
 	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF \
 	-DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ .
 	make -j$(NJOBS)
-	make install DESTDIR=$(INSTALLDIR)
-	popd
+	make install DESTDIR=$(INSTALLDIR)	
 
 jemalloc:
-	pushd $(PSMSRC)/src/third_party/jemalloc
+	cd $(PSMSRC)/src/third_party/jemalloc
 	./configure --prefix=/
 	make -j$(NJOBS) build_lib_static
 	make install_lib_static DESTDIR=$(INSTALLDIR)
-	popd
-
+	
 RocksDB:
-	pushd $(PSMSRC)/src/third_party/rocksdb
+	cd $(PSMSRC)/src/third_party/rocksdb
 	make -j$(NJOBS) static_lib
 	make install-static INSTALL_PATH=${INSTALLDIR}
-	popd
-#
+
 # Finally PSfMDB
 percona-server-mongodb: PerconaFT RocksDB jemalloc
 	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
