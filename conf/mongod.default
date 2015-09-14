@@ -1,1 +1,1 @@
-OPTIONS="--quiet -f /etc/mongod.conf --storageEngine=tokuft"
+OPTIONS="--quiet -f /etc/mongod.conf"
