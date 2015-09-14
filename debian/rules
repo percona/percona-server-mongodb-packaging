@@ -18,22 +18,16 @@ endef
 clean:
 	rm -fr $(PSMSRC)/bin
 	rm -fr $(INSTALLDIR)
-	scons -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
+	scons -C $(PSMSRC) -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
 	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
 		
 PerconaFT: 
 	$(call chdir, $(PSMSRC)/src/third_party/PerconaFT)   
-	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ .  
+	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc .  
 	make -j$(NJOBS) 
 	make install DESTDIR=$(INSTALLDIR)	
-
-jemalloc:
-	$(call chdir, $(PSMSRC)/src/third_party/jemalloc)
-	./configure --prefix=/
-	make -j$(NJOBS) build_lib_static
-	make install_lib_static DESTDIR=$(INSTALLDIR)
 	
 RocksDB:
 	$(call chdir, $(PSMSRC)/src/third_party/rocksdb)
@@ -41,9 +35,9 @@ RocksDB:
 	make install-static INSTALL_PATH=${INSTALLDIR}
 
 # Finally PSfMDB
-percona-server-mongodb: PerconaFT RocksDB jemalloc
-	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
-	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+percona-server-mongodb: PerconaFT RocksDB
+	$(call chdir, $(PSMSRC))
+	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg

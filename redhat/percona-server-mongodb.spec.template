@@ -97,16 +97,10 @@ popd
 
 # PerconaFT
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
-cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ .
+cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF \
+-DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$RPM_BUILD_DIR/%{src_dir}/src/third_party/jemalloc
 %{__make} %{?_smp_mflags} 
 %{__make} install DESTDIR=${INSTALLDIR}
-popd
-
-# Jemalloc
-pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/jemalloc
-./configure --prefix=/
-%{__make} %{?_smp_mflags} build_lib_static
-%{__make} install_lib_static DESTDIR=${INSTALLDIR}
 popd
 
 # RocksDB 
