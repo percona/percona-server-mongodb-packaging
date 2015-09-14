@@ -6,32 +6,41 @@ export NJOBS=$(shell grep -c processor /proc/cpuinfo)
 export PSM_TARGETS=mongod mongos mongo
 export PSMSRC=$(shell pwd)
 export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog
+export INSTALLDIR=$(PSMSRC)/install
 #
 clean:
 	rm -fr $(PSMSRC)/bin
-	rm -fr $(PSMSRC)/src/third_party/PerconaFT/pft-build
-	rm -fr $(PSMSRC)/src/third_party/pft
-	scons -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(PSMSRC)/src/third_party/pft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+	rm -fr $(INSTALLDIR)/*
+	scons -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
+	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
 		
-PerconaFT-configure: 
-	mkdir -p $(PSMSRC)/src/third_party/PerconaFT/pft-build
-	cd $(PSMSRC)/src/third_party/PerconaFT/pft-build
-	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF \
-	-DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF \
-	-DCMAKE_INSTALL_PREFIX=$(PSMSRC)/src/third_party/PerconaFT/pft-build/install $(PSMSRC)/src/third_party/PerconaFT
+PerconaFT: 
+	pushd $(PSMSRC)/src/third_party/PerconaFT
+	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF \
+	-DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ .
+	make -j$(NJOBS)
+	make install DESTDIR=$(INSTALLDIR)
+	popd
 
-PerconaFT: PerconaFT-configure
-	cd $(PSMSRC)/src/third_party/PerconaFT/pft-build
-	make -j$(NJOBS) install 
-	mv $(PSMSRC)/src/third_party/PerconaFT/pft-build/install $(PSMSRC)/src/third_party/pft
-	rm -rfv $(PSMSRC)/src/third_party/PerconaFT/pft-build
-	
-percona-server-mongodb: PerconaFT
-	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(PSMSRC)/src/third_party/pft/include \
-	LIBPATH=$(PSMSRC)/src/third_party/pft/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+jemalloc:
+	pushd $(PSMSRC)/src/third_party/jemalloc
+	./configure --prefix=/
+	make -j$(NJOBS) build_lib_static
+	make install_lib_static DESTDIR=$(INSTALLDIR)
+	popd
+
+RocksDB:
+	pushd $(PSMSRC)/src/third_party/rocksdb
+	make -j$(NJOBS) static_lib
+	make install-static INSTALL_PATH=${INSTALLDIR}
+	popd
+#
+# Finally PSfMDB
+percona-server-mongodb: PerconaFT RocksDB jemalloc
+	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
+	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
