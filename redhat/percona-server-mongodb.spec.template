@@ -81,33 +81,46 @@ This package contains various tools from MongoDB project, recompiled for Percona
 
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
+export PORTABLE=1
+export PSM_TARGETS="mongod mongos mongo"
+export INSTALLDIR=$RPM_BUILD_DIR/install
 
-cd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
+# Mongo Tools
+pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 . ./set_gopath.sh
 rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
 mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
 for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do 
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
 done
+popd
 
-mkdir -p $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/pft-build
-cd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT/pft-build
-cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=$PWD/install ..
-make %{?_smp_mflags} install
+# PerconaFT
+pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
+cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ .
+%{__make} %{?_smp_mflags} 
+%{__make} install DESTDIR=${INSTALLDIR}
+popd
 
-# Move the installed fractal tree to appropriate place and remove source dir
-mv $PWD/install $RPM_BUILD_DIR/%{src_dir}/src/third_party/pft
-rm -rf $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
-#
+# Jemalloc
+pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/jemalloc
+./configure --prefix=/
+%{__make} %{?_smp_mflags} build_lib_static
+%{__make} install_lib_static DESTDIR=${INSTALLDIR}
+popd
+
+# RocksDB 
+pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/rocksdb
+%{__make} %{?_smp_mflags} static_lib
+%{__make} install-static INSTALL_PATH=${INSTALLDIR}
+popd
+
 # Build MXSE with SCons
-
-cd $RPM_BUILD_DIR/%{src_dir}
-
-export PSM_TARGETS="mongod mongos mongo"
-
-scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} %{?_smp_mflags} \
---use-sasl-client CPPPATH=$PWD/src/third_party/pft/include LIBPATH=$PWD/src/third_party/pft/lib \
+pushd $RPM_BUILD_DIR/%{src_dir}
+scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
+%{?_smp_mflags} --use-sasl-client CPPPATH=${INSTALLDIR}/include LIBPATH=${INSTALLDIR}/lib \
 --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
+popd 
 
 %install
 #
