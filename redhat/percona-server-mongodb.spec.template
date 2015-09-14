@@ -1,13 +1,13 @@
 %define src_dir @@SRC_DIR@@
 
-Name:           percona-server-mongodb
+Name:           Percona-Server-MongoDB
 Version:        @@VERSION@@
 Release:        @@RELEASE@@%{?dist}
 Summary:        High-performance MongoDB replacement from Percona (metapackage)
 Group:          Applications/Databases
 
 License:        AGPL
-URL:            https://github.com/percona/percona-server-mongodb
+URL:            https://github.com/percona/percona-server-mongodb.git
 Source0:        @@SOURCE_TARBALL@@
 Source1:        mongod.conf
 Source2:        mongod.service
@@ -25,10 +25,10 @@ BuildRequires: golang
 BuildRequires: librocksdb-devel
 %endif
 
-Requires: percona-server-mongodb-mongos = %{version}-%{release}  
-Requires: percona-server-mongodb-server = %{version}-%{release}  
-Requires: percona-server-mongodb-shell = %{version}-%{release}  
-Requires: percona-server-mongodb-tools = %{version}-%{release}    
+Requires: Percona-Server-MongoDB-mongos = %{version}-%{release}  
+Requires: Percona-Server-MongoDB-server = %{version}-%{release}  
+Requires: Percona-Server-MongoDB-shell = %{version}-%{release}  
+Requires: Percona-Server-MongoDB-tools = %{version}-%{release}    
 
 %description
 This package contains high-performance MongoDB replacement from Percona - Percona Server for MongoDB.
