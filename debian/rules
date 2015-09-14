@@ -9,12 +9,6 @@ export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongores
 export INSTALLDIR=$(PSMSRC)/install
 export PORTABLE=1
 #
-CHDIR_SHELL := $(SHELL)
-define chdir
-	$(eval _D=$(firstword $(1) $(@D)))
-	$(info $(MAKE): cd $(_D)) $(eval SHELL = cd $(_D); $(CHDIR_SHELL))
-endef
-#
 clean:
 	rm -fr $(PSMSRC)/bin
 	rm -fr $(INSTALLDIR)
@@ -24,19 +18,18 @@ clean:
 	find $(PSMSRC) -name '*.pyc' -delete
 		
 PerconaFT: 
-	$(call chdir, $(PSMSRC)/src/third_party/PerconaFT)   
-	cmake -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc .  
-	make -j$(NJOBS) 
+	cd $(PSMSRC)/src/third_party/PerconaFT; \
+	cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc; \
+	make -j$(NJOBS); \
 	make install DESTDIR=$(INSTALLDIR)	
 	
 RocksDB:
-	$(call chdir, $(PSMSRC)/src/third_party/rocksdb)
-	make -j$(NJOBS) static_lib
+	cd $(PSMSRC)/src/third_party/rocksdb; \
+	make -j$(NJOBS) static_lib; \
 	make install-static INSTALL_PATH=${INSTALLDIR}
 
 # Finally PSfMDB
 percona-server-mongodb: PerconaFT RocksDB
-	$(call chdir, $(PSMSRC))
 	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
