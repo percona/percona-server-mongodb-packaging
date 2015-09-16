@@ -6,7 +6,5 @@
 # create a mongodb group and user
 
 if ! getent passwd mongod >/dev/null 2>&1; then
-	adduser --system --no-create-home mongod
-  addgroup --system mongod
-  adduser mongod mongod
+  adduser --system --no-create-home --home /var/lib/mongodb --group mongod
 fi
