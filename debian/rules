@@ -8,7 +8,7 @@ export PSMSRC=$(CURDIR)
 export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog
 export INSTALLDIR=$(PSMSRC)/install
 export PORTABLE=1
-export TOOLS_TAGS="ssl sasl"
+export TOOLS_TAGS=ssl sasl
 #
 clean:
 	rm -fr $(PSMSRC)/bin
