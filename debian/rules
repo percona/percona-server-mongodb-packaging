@@ -37,7 +37,7 @@ compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
 	mkdir -p $(PSMSRC)/bin
 	for tool in $(MONGOTOOLS) ; do \
-		go build -a -x -o $(PSMSRC)/bin/$$tool -tags "${TOOLS_TAGS}" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
+		go build -a -o $(PSMSRC)/bin/$$tool -tags "${TOOLS_TAGS}" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
 	done
 
 build: compile-mongo-tools percona-server-mongodb
