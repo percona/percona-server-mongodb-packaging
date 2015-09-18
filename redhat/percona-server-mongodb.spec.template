@@ -16,6 +16,7 @@ Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
+%define         _unpackaged_files_terminate_build 0
 
 
 BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
@@ -67,11 +68,13 @@ Summary:        Percona Server for MongoDB shell client
 %description shell
 This package contains the Percona Server for MongoDB shell
 
+%if 0%{?rhel} > 5
 %package tools
 Group:          Applications/Databases
 Summary:        The tools package for Percona Server for MongoDB
 %description tools
 This package contains various tools from MongoDB project, recompiled for Percona Percona Server for MongoDB
+%endif
 
 %prep
 
@@ -85,6 +88,7 @@ export PORTABLE=1
 export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
 
+%if 0%{?rhel} > 5
 # Mongo Tools
 pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 . ./set_gopath.sh
@@ -94,6 +98,7 @@ for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore m
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
 done
 popd
+%endif
 
 # PerconaFT
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
@@ -128,6 +133,7 @@ install -m 755 -d %{buildroot}/%{_sysconfdir}
 install -m 755 -d %{buildroot}/%{_mandir}/man1
 
 install -m 750 -d %{buildroot}/var/log/mongodb
+touch %{buildroot}/var/log/mongodb/mongod.log
 install -m 750 -d %{buildroot}/%{_sharedstatedir}/mongodb
 install -m 755 -d %{buildroot}/%{_sysconfdir}/sysconfig
 #
@@ -147,7 +153,11 @@ install -m 755 %{SOURCE4} %{buildroot}/%{_bindir}/
 install -m 755 mongo %{buildroot}/%{_bindir}/
 install -m 755 mongod %{buildroot}/%{_sbindir}/
 install -m 755 mongos %{buildroot}/%{_bindir}/
+
+%if 0%{?rhel} > 5
 install -m 755 $RPM_BUILD_DIR/%{src_dir}/bin/* %{buildroot}/%{_bindir}/
+%endif
+
 install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1/
 
 %files
@@ -179,6 +189,7 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %{_bindir}/mongo
 %{_mandir}/man1/mongo.1.gz
 
+%if 0%{?rhel} > 5
 %files tools
 %defattr(-,root,root,-)
 %{_bindir}/bsondump 
@@ -199,6 +210,7 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %{_mandir}/man1/mongotop.1.gz
 %{_bindir}/mongooplog
 %{_mandir}/man1/mongooplog.1.gz
+%endif
 
 %pre server
 if [ $1 == 1 ]; then
@@ -231,7 +243,12 @@ if [ $1 == 0 ]; then
     /usr/sbin/groupdel mongod > /dev/null 2>&1 || true
   fi
 fi
+
 #
 %changelog
-* Fri May 22 2015 Alexey Bychko <alexey.bychko@percona.com> @@VERSION@@
-- Initial RPM release for TokuMX SE packaged for Percona
+
+* Fri Sep 18 2015 Alexey Bychko <alexey.bychko@percona.com> 3.0.5
+- Percona Server for MongoDB RC 7
+
+* Fri May 22 2015 Alexey Bychko <alexey.bychko@percona.com> 3.0
+- Initial RPM release for Percona Server for MongoDB
