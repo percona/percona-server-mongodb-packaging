@@ -37,6 +37,8 @@ compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
 	mkdir -p $(PSMSRC)/bin
 	for tool in $(MONGOTOOLS) ; do \
+		cd $(PSMSRC)/mongo-tools; \
+		. ./set_gopath.sh; \
 		go build -a -o $(PSMSRC)/bin/$$tool -tags "${TOOLS_TAGS}" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
 	done
 
