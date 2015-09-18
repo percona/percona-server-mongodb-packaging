@@ -1,5 +1,4 @@
-%define src_dir @@SRC_DIR@@
-
+#
 Name:           Percona-Server-MongoDB
 Version:        @@VERSION@@
 Release:        @@RELEASE@@%{?dist}
@@ -17,7 +16,7 @@ Source5:        mongod.init
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
-
+%define         src_dir @@SRC_DIR@@
 
 BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
 BuildRequires: /usr/bin/scons
@@ -87,6 +86,7 @@ export CXX=${CXX:-g++}
 export PORTABLE=1
 export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
+export TOOLS_TAGS="ssl sasl"
 
 %if 0%{?rhel} > 5
 # Mongo Tools
@@ -95,7 +95,7 @@ pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
 mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
 for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do 
-  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
+  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go; 
 done
 popd
 %endif
