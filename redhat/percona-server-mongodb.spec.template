@@ -116,7 +116,7 @@ popd
 
 # Build MXSE with SCons
 pushd $RPM_BUILD_DIR/%{src_dir}
-scons --variant-dir=percona --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
+scons --variant-dir=percona --audit --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
 %{?_smp_mflags} --use-sasl-client CPPPATH=${INSTALLDIR}/include LIBPATH=${INSTALLDIR}/lib \
 --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $PSM_TARGETS
 popd 

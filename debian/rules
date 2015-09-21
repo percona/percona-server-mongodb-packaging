@@ -13,7 +13,7 @@ export TOOLS_TAGS=ssl sasl
 clean:
 	rm -fr $(PSMSRC)/bin
 	rm -fr $(INSTALLDIR)
-	scons -C $(PSMSRC) -c --variant-dir=percona --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
+	scons -C $(PSMSRC) -c --variant-dir=percona --audit --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
 	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
@@ -31,7 +31,7 @@ RocksDB:
 
 # Finally PSfMDB
 percona-server-mongodb: PerconaFT RocksDB
-	scons --variant-dir=percona --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
