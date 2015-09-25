@@ -20,13 +20,7 @@ pre-start script
   mkdir -p /var/run
   touch /var/run/mongod.pid
   chown $DAEMONUSER /var/run/mongod.pid
-  if [ -f /sys/kernel/mm/transparent_hugepage/enabled ]; then
-   echo never > /sys/kernel/mm/transparent_hugepage/enabled
-  fi
-#
-  if [ -f /sys/kernel/mm/transparent_hugepage/defrag ]; then
-    echo never > /sys/kernel/mm/transparent_hugepage/defrag
-  fi
+  . /usr/bin/percona-server-mongodb-helper.sh
 #
 end script
 

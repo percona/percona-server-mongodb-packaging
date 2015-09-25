@@ -90,7 +90,6 @@ if test "x$ENABLE_MONGOD" != "xyes"; then
 fi
 
 . /lib/lsb/init-functions
-[ "$1" = "start" ] && . /usr/bin/percona-server-mongodb-helper.sh
 
 STARTTIME=1
 DIETIME=10                   # Time to wait for the server to die, in seconds
@@ -143,6 +142,7 @@ start_server() {
             fi
 
             # Start the process using the wrapper
+            . /usr/bin/percona-server-mongodb-helper.sh
             start-stop-daemon --background --start --quiet --pidfile $PIDFILEPATH \
                         --make-pidfile --chuid $MONGO_USER \
                         --exec $NUMACTL $DAEMON $DAEMON_OPTS

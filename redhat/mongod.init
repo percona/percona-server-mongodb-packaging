@@ -9,7 +9,6 @@
 # pidfile: /var/run/mongod.pid
 
 . /etc/rc.d/init.d/functions
-[ "$1" = "start" ] && . /usr/bin/percona-server-mongodb-helper.sh
 
 # things from mongod.conf get there by mongod reading it
 
@@ -49,7 +48,7 @@ start()
 
   touch ${PIDFILEPATH}
   chown ${MONGO_USER} ${PIDFILEPATH}
-
+  . /usr/bin/percona-server-mongodb-helper.sh
   # Recommended ulimit values for mongod or mongos
   # See http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
   #
