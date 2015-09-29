@@ -1,4 +1,6 @@
 #
+%define         mongo_home %{_sharedstatedir}/mongo
+#
 Name:           Percona-Server-MongoDB
 Version:        @@VERSION@@
 Release:        @@RELEASE@@%{?dist}
@@ -132,12 +134,13 @@ install -m 755 -d %{buildroot}/%{_sbindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}
 install -m 755 -d %{buildroot}/%{_mandir}/man1
 
-install -m 750 -d %{buildroot}/var/log/mongodb
-touch %{buildroot}/var/log/mongodb/mongod.log
-install -m 750 -d %{buildroot}/%{_sharedstatedir}/mongodb
+install -m 750 -d %{buildroot}/var/log/mongo
+touch %{buildroot}/var/log/mongo/mongod.log
+install -m 750 -d %{buildroot}/%{mongo_home}
 install -m 755 -d %{buildroot}/%{_sysconfdir}/sysconfig
 #
 install -m 644 %{SOURCE1} %{buildroot}/%{_sysconfdir}/mongod.conf
+sed -i 's:mongodb:mongo:g' %{buildroot}/%{_sysconfdir}/mongod.conf
 # startup stuff
 %if 0%{?rhel} >= 7
   install -m 755 -d %{buildroot}/%{_unitdir}
@@ -177,11 +180,11 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %else
 /etc/rc.d/init.d/mongod
 %endif
-%attr(0750,mongod,mongod) %dir %{_sharedstatedir}/mongodb
-%attr(0750,mongod,mongod) %dir /var/log/mongodb
+%attr(0750,mongod,mongod) %dir %{mongo_home}
+%attr(0750,mongod,mongod) %dir /var/log/mongo
 %config(noreplace) %{_sysconfdir}/mongod.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/mongod
-%attr(0640,mongod,mongod) %ghost /var/log/mongodb/mongod.log
+%attr(0640,mongod,mongod) %ghost /var/log/mongo/mongod.log
 %doc GNU-AGPL-3.0 README THIRD-PARTY-NOTICES
 
 %files shell
@@ -216,7 +219,7 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 if [ $1 == 1 ]; then
   if ! getent passwd mongod > /dev/null 2>&1; then
     /usr/sbin/groupadd --system mongod
-    /usr/sbin/useradd -M -r -g mongod -d /var/lib/mongo -s /bin/false -c mongod mongod > /dev/null 2>&1
+    /usr/sbin/useradd -M -r -g mongod -d %{mongo_home} -s /bin/false -c mongod mongod > /dev/null 2>&1
   fi
 fi
 #
