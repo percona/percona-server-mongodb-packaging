@@ -43,6 +43,8 @@ compile-mongo-tools:
 	done
 
 build: compile-mongo-tools percona-server-mongodb
+
+binary:
 	dh_testdir
 	dh_testroot
 	dh_prep
@@ -57,8 +59,6 @@ build: compile-mongo-tools percona-server-mongodb
 	dh_installinit -a --name=mongod
 	dh_installman -a
 	dh_installdocs -a
-
-binary: 
 	dh_systemd_start
 	dh_strip -a --dbg-package=percona-server-mongodb-dbg
 	dh_lintian
