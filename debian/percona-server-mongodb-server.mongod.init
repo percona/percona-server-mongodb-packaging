@@ -154,8 +154,7 @@ stop_server() {
 # Stop the process using the wrapper
             start-stop-daemon --stop --quiet --pidfile $PIDFILEPATH \
                         --retry 300 \
-                        --user $MONGO_USER \
-                        --exec $DAEMON
+                        --user $MONGO_USER
             errcode=$?
 	return $errcode
 }
