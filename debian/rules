@@ -27,11 +27,11 @@ PerconaFT:
 RocksDB:
 	cd $(PSMSRC)/src/third_party/rocksdb; \
 	make -j$(NJOBS) static_lib; \
-	make install-static INSTALL_PATH=${INSTALLDIR}
+	make install-static INSTALL_PATH=$(INSTALLDIR)
 
 # Finally PSfMDB
 percona-server-mongodb: PerconaFT RocksDB
-	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc $(PSM_TARGETS)
+	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
