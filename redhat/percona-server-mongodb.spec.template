@@ -15,6 +15,9 @@ Source2:        mongod.service
 Source3:        mongod.default
 Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
+%if 0%{?rhel} == 5
+Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
+%endif
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
@@ -69,13 +72,11 @@ Summary:        Percona Server for MongoDB shell client
 %description shell
 This package contains the Percona Server for MongoDB shell
 
-%if 0%{?rhel} > 5
 %package tools
 Group:          Applications/Databases
 Summary:        The tools package for Percona Server for MongoDB
 %description tools
-This package contains various tools from MongoDB project, recompiled for Percona Percona Server for MongoDB
-%endif
+This package contains various tools from MongoDB project, recompiled for Percona Server for MongoDB
 
 %prep
 
@@ -91,7 +92,7 @@ export INSTALLDIR=$RPM_BUILD_DIR/install
 export TOOLS_TAGS="ssl sasl"
 
 %if 0%{?rhel} > 5
-# Mongo Tools
+# Mongo Tools compilation
 pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 . ./set_gopath.sh
 rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
@@ -116,7 +117,7 @@ pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/rocksdb
 %{__make} install-static INSTALL_PATH=${INSTALLDIR}
 popd
 
-# Build MXSE with SCons
+# Build PSfMDB with SCons
 pushd $RPM_BUILD_DIR/%{src_dir}
 scons --variant-dir=percona --audit --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
 %{?_smp_mflags} --use-sasl-client CPPPATH=${INSTALLDIR}/include LIBPATH=${INSTALLDIR}/lib \
@@ -163,6 +164,11 @@ install -m 755 $RPM_BUILD_DIR/%{src_dir}/bin/* %{buildroot}/%{_bindir}/
 
 install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1/
 
+%if 0%{?rhel} == 5
+tar xzf %{SOURCE6} -C $RPM_BUILD_DIR
+cp -av $RPM_BUILD_DIR/mongo-tools-ce5/* %{buildroot}/%{_bindir}/
+%endif
+
 %files
 
 %files mongos
@@ -192,7 +198,6 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %{_bindir}/mongo
 %{_mandir}/man1/mongo.1.gz
 
-%if 0%{?rhel} > 5
 %files tools
 %defattr(-,root,root,-)
 %{_bindir}/bsondump 
@@ -213,7 +218,6 @@ install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1
 %{_mandir}/man1/mongotop.1.gz
 %{_bindir}/mongooplog
 %{_mandir}/man1/mongooplog.1.gz
-%endif
 
 %pre server
 if [ $1 == 1 ]; then
