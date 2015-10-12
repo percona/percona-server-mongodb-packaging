@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for mongodb
+# postinst script for Percona Server for MongoDB
 #
 # see: dh_installdeb(1)
 
