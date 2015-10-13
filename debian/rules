@@ -47,6 +47,7 @@ build: compile-mongo-tools percona-server-mongodb
 binary:
 	dh_testdir
 	dh_testroot
+	dh_installdebconf -a
 	dh_prep
 	dh_installdirs
 	cp -av mongos debian/percona-server-mongodb-mongos/usr/bin

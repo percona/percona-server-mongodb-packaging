@@ -2,6 +2,10 @@
 # postrm script for Percona Server for MongoDB
 #
 
+if [ -n "${PERCONA_DEBUG}" ]; then
+  set -x
+fi
+
 set -e
 
 if [ -f /usr/share/debconf/confmodule ]; then
