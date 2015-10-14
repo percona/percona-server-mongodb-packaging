@@ -4,6 +4,7 @@
 
 if [ -n "${PERCONA_DEBUG}" ]; then
   set -x
+  export DEBCONF_DEBUG=developer
 fi
 
 set -e
@@ -24,8 +25,6 @@ case "$1" in
 
 esac
 
-#DEBHELPER#
-
 if [ "$1" = "purge" ]; then
   db_input high percona-server-mongodb-server/postrm_remove_databases || true
   db_go || true
@@ -37,6 +36,9 @@ if [ "$1" = "purge" ]; then
     userdel mongod || true
   fi
 fi
+
+#DEBHELPER#
+
 exit 0
 
 

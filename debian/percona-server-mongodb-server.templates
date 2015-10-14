@@ -1,7 +1,7 @@
 Template: percona-server-mongodb-server/postrm_remove_databases
 Type: boolean
 Default: false
-_Description: Remove all Percona Server for MongoDB databases?
+Description: Remove all Percona Server for MongoDB databases?
  The /var/lib/mongodb directory which contains the Percona Server for MongoDB databases is
  about to be removed.
  .

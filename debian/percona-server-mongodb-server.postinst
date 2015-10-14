@@ -3,6 +3,10 @@
 #
 # see: dh_installdeb(1)
 
+if [ -f /usr/share/debconf/confmodule ]; then
+    . /usr/share/debconf/confmodule
+fi
+
 set -e
 
 # summary of how this script can be called:
@@ -22,6 +26,7 @@ case "$1" in
     configure)
       chown -R mongod:mongod /var/lib/mongodb
       chown -R mongod:mongod /var/log/mongodb
+      db_set percona-server-mongodb-server/postrm_remove_database false || true
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

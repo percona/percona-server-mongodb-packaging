@@ -8,3 +8,7 @@
 if ! getent passwd mongod >/dev/null 2>&1; then
   adduser --system --home /var/lib/mongodb --group mongod
 fi
+
+#DEBHELPER#
+
+exit 0

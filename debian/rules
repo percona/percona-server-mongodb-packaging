@@ -10,7 +10,11 @@ export INSTALLDIR=$(PSMSRC)/install
 export PORTABLE=1
 export TOOLS_TAGS=ssl sasl
 #
-clean:
+%:
+	dh $@
+
+override_dh_auto_clean:
+	dh_auto_clean
 	rm -fr $(PSMSRC)/bin
 	rm -fr $(INSTALLDIR)
 	scons -C $(PSMSRC) -c --variant-dir=percona --audit --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
@@ -44,29 +48,21 @@ compile-mongo-tools:
 
 build: compile-mongo-tools percona-server-mongodb
 
-binary:
-	dh_testdir
-	dh_testroot
-	dh_installdebconf -a
-	dh_prep
-	dh_installdirs
+override_dh_auto_install:
+	dh_auto_install
 	cp -av mongos debian/percona-server-mongodb-mongos/usr/bin
 	cp -av mongo debian/percona-server-mongodb-shell/usr/bin
 	cp -av mongod debian/percona-server-mongodb-server/usr/sbin
 	cp -av debian/percona-server-mongodb-helper.sh debian/percona-server-mongodb-server/usr/bin
 	cp -av debian/mongod.conf debian/percona-server-mongodb-server/etc/mongod.conf
 	cp -av $(PSMSRC)/bin/* debian/percona-server-mongodb-tools/usr/bin
-	dh_systemd_enable --name=mongod
-	dh_installinit -a --name=mongod
-	dh_installman -a
-	dh_installdocs -a
-	dh_systemd_start
+
+override_dh_strip:
 	dh_strip -a --dbg-package=percona-server-mongodb-dbg
-	dh_lintian
-	dh_fixperms -a
-	dh_installdeb -a
-	dh_shlibdeps -a
-	dh_gencontrol -a
-	dh_md5sums -a
-	dh_builddeb -a
+
+override_dh_installinit:
+	dh_installinit -a --name=mongod
+
+override_dh_systemd_enable:
+	dh_systemd_enable --name=mongod
 
