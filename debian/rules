@@ -40,7 +40,7 @@ RocksDB:
 	make install-static INSTALL_PATH=$(INSTALLDIR)
 
 # Finally PSfMDB
-percona-server-mongodb: PerconaFT RocksDB
+percona-server-mongodb: PerconaFT RocksDB TokuBackup
 	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --tokubackup $(PSM_TARGETS)
 
 compile-mongo-tools:
