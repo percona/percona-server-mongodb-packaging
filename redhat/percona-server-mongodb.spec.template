@@ -103,6 +103,13 @@ done
 popd
 %endif
 
+# TokuBackup
+pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/Percona-TokuBackup/backup
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DBUILD_STATIC_LIBRARY=ON
+make -j4
+make install DESTDIR=${INSTALLDIR}
+popd
+
 # PerconaFT
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/PerconaFT
 cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF \
@@ -121,7 +128,7 @@ popd
 pushd $RPM_BUILD_DIR/%{src_dir}
 scons --variant-dir=percona --audit --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
 %{?_smp_mflags} --use-sasl-client CPPPATH=${INSTALLDIR}/include LIBPATH=${INSTALLDIR}/lib \
---PerconaFT --rocksdb --wiredtiger $PSM_TARGETS
+--PerconaFT --rocksdb --wiredtiger --tokubackup $PSM_TARGETS
 popd 
 
 %install
