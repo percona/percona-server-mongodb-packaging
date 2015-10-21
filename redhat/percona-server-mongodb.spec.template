@@ -23,11 +23,11 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %define         _unpackaged_files_terminate_build 0
 %define         src_dir @@SRC_DIR@@
 
-BuildRequires: zlib-devel, gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
+BuildRequires: gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
+BuildRequires: snappy-devel, zlib-devel, bzip2-devel
 BuildRequires: /usr/bin/scons
 %if 0%{?rhel} > 5
 BuildRequires: golang
-BuildRequires: librocksdb-devel
 %endif
 
 Requires: Percona-Server-MongoDB-mongos = %{version}-%{release}  

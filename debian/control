@@ -3,8 +3,9 @@ Maintainer: Alexey Bychko <alexey.bychko@percona.com>
 Section: database
 Priority: extra
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 9), debconf, dialog,
-               dh-systemd, librocksdb-dev, libsasl2-dev
+Build-Depends: debhelper (>= 9), debconf, dialog, libbz2-dev, libsnappy-dev, pkg-config, 
+							 zlib1g-dev, libzlcore-dev, dh-systemd, libsasl2-dev, g++, cmake
+
 
 Package: percona-server-mongodb
 Architecture: any
