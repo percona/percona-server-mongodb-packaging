@@ -19,7 +19,7 @@ override_dh_auto_clean:
 	dh_auto_clean
 	rm -fr $(PSMSRC)/bin
 	rm -fr $(INSTALLDIR)
-	scons -C $(PSMSRC) -c --variant-dir=percona --audit --release --ssl --opt -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
+	scons -C $(PSMSRC) -c --variant-dir=percona --audit --release --ssl --opt --cc=$(CC) --cxx=$(CXX) -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include \
 	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc --tokubackup $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
@@ -43,8 +43,8 @@ RocksDB:
 
 # Finally PSfMDB
 percona-server-mongodb:
-	scons --variant-dir=percona --audit --release --ssl --opt=on --cc=$(CC) --cxx=$(CXX) -j$(NJOBS) --use-sasl-client \
-	CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib CCFLAGS="-Wno-unused-variable -Wno-maybe-uninitialized" \
+	scons --variant-dir=percona --audit --release --ssl --opt=on --cc=$(CC) --cxx=$(CXX) -j$(NJOBS) \
+	--use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib \
 	--PerconaFT --rocksdb --wiredtiger --tokubackup $(PSM_TARGETS)
 
 compile-mongo-tools:
