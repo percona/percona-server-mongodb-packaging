@@ -40,8 +40,10 @@ RocksDB:
 	make install-static INSTALL_PATH=$(INSTALLDIR)
 
 # Finally PSfMDB
-percona-server-mongodb: PerconaFT RocksDB TokuBackup
-	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --tokubackup $(PSM_TARGETS)
+percona-server-mongodb:
+	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client \
+	CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib CCFLAGS="-Wno-unused-variable -Wno-maybe-uninitialized" \
+	--PerconaFT --rocksdb --wiredtiger --tokubackup $(PSM_TARGETS)
 
 compile-mongo-tools:
 	rm -rf $(PSMSRC)/mongo-tools/vendor/pkg
@@ -52,7 +54,7 @@ compile-mongo-tools:
 		go build -a -o $(PSMSRC)/bin/$$tool -tags "$(TOOLS_TAGS)" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
 	done
 
-build: compile-mongo-tools percona-server-mongodb
+build: compile-mongo-tools PerconaFT RocksDB TokuBackup percona-server-mongodb
 
 override_dh_auto_install:
 	dh_auto_install
