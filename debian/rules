@@ -9,6 +9,8 @@ export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongores
 export INSTALLDIR=$(PSMSRC)/install
 export PORTABLE=1
 export TOOLS_TAGS=ssl sasl
+CC = gcc-4.8
+CXX = g++-4.8
 #
 %:
 	dh $@
@@ -41,7 +43,7 @@ RocksDB:
 
 # Finally PSfMDB
 percona-server-mongodb:
-	scons --variant-dir=percona --audit --release --ssl --opt=on -j$(NJOBS) --use-sasl-client \
+	scons --variant-dir=percona --audit --release --ssl --opt=on --cc=$(CC) --cxx=$(CXX) -j$(NJOBS) --use-sasl-client \
 	CPPPATH=$(INSTALLDIR)/include LIBPATH=$(INSTALLDIR)/lib CCFLAGS="-Wno-unused-variable -Wno-maybe-uninitialized" \
 	--PerconaFT --rocksdb --wiredtiger --tokubackup $(PSM_TARGETS)
 
