@@ -26,19 +26,19 @@ override_dh_auto_clean:
 		
 TokuBackup:
 	cd $(PSMSRC)/src/third_party/Percona-TokuBackup/backup; \
-	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DBUILD_STATIC_LIBRARY=ON; \
+	CC=$(CC) CXX=$(CXX) cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DBUILD_STATIC_LIBRARY=ON; \
 	make -j$(NJOBS); \
 	make install DESTDIR=$(INSTALLDIR)
 
 PerconaFT: 
 	cd $(PSMSRC)/src/third_party/PerconaFT; \
-	cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc; \
+	CC=$(CC) CXX=$(CXX) cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc; \
 	make -j$(NJOBS); \
 	make install DESTDIR=$(INSTALLDIR)	
 	
 RocksDB:
 	cd $(PSMSRC)/src/third_party/rocksdb; \
-	make -j$(NJOBS) static_lib; \
+	CC=$(CC) CXX=$(CXX) make -j$(NJOBS) static_lib; \
 	make install-static INSTALL_PATH=$(INSTALLDIR)
 
 # Finally PSfMDB
