@@ -26,7 +26,7 @@ TokuBackup:
 	cd $(PSMSRC)/src/third_party/Percona-TokuBackup/backup; \
 	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DBUILD_STATIC_LIBRARY=ON; \
 	make -j$(NJOBS); \
-	make install DESTDIR=${INSTALLDIR}
+	make install DESTDIR=$(INSTALLDIR)
 
 PerconaFT: 
 	cd $(PSMSRC)/src/third_party/PerconaFT; \
@@ -49,7 +49,7 @@ compile-mongo-tools:
 	for tool in $(MONGOTOOLS) ; do \
 		cd $(PSMSRC)/mongo-tools; \
 		. ./set_gopath.sh; \
-		go build -a -o $(PSMSRC)/bin/$$tool -tags "${TOOLS_TAGS}" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
+		go build -a -o $(PSMSRC)/bin/$$tool -tags "$(TOOLS_TAGS)" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go ; \
 	done
 
 build: compile-mongo-tools percona-server-mongodb
