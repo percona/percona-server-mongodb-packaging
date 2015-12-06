@@ -21,6 +21,8 @@ Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
+%global _dwz_low_mem_die_limit 0
+
 %define         src_dir @@SRC_DIR@@
 
 BuildRequires: gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
