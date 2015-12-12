@@ -1,4 +1,3 @@
-usr/sbin
 usr/bin
 var/lib/mongodb
 var/log/mongodb

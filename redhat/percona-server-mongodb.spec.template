@@ -22,7 +22,7 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
 
-%if 0%{?rhel} > 6 
+%if 0%{?rhel} > 6
 %global _dwz_low_mem_die_limit 0
 %endif
 
@@ -143,7 +143,6 @@ rm -rf %{buildroot}
 
 #
 install -m 755 -d %{buildroot}/%{_bindir}
-install -m 755 -d %{buildroot}/%{_sbindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}
 install -m 755 -d %{buildroot}/%{_mandir}/man1
 
@@ -167,7 +166,7 @@ install -m 644 %{SOURCE3} %{buildroot}/%{_sysconfdir}/sysconfig/mongod
 install -m 755 %{SOURCE4} %{buildroot}/%{_bindir}/
 #
 install -m 755 mongo %{buildroot}/%{_bindir}/
-install -m 755 mongod %{buildroot}/%{_sbindir}/
+install -m 755 mongod %{buildroot}/%{_bindir}/
 install -m 755 mongos %{buildroot}/%{_bindir}/
 
 %if 0%{?rhel} > 5
@@ -190,7 +189,7 @@ cp -av $RPM_BUILD_DIR/mongo-tools-ce5/* %{buildroot}/%{_bindir}/
 
 %files server
 %defattr(-,root,root,-)
-%{_sbindir}/mongod
+%{_bindir}/mongod
 %{_mandir}/man1/mongod.1.gz
 %{_bindir}/percona-server-mongodb-helper.sh
 %if 0%{?rhel} >= 7

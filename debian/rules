@@ -23,19 +23,19 @@ override_dh_auto_clean:
 	LIBPATH=$(INSTALLDIR)/lib --PerconaFT --rocksdb --wiredtiger --allocator=jemalloc --tokubackup $(PSM_TARGETS)
 	rm -fr build
 	find $(PSMSRC) -name '*.pyc' -delete
-		
+
 TokuBackup:
 	cd $(PSMSRC)/src/third_party/Percona-TokuBackup/backup; \
 	CC=$(CC) CXX=$(CXX) cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/ -DBUILD_STATIC_LIBRARY=ON; \
 	make -j$(NJOBS); \
 	make install DESTDIR=$(INSTALLDIR)
 
-PerconaFT: 
+PerconaFT:
 	cd $(PSMSRC)/src/third_party/PerconaFT; \
 	CC=$(CC) CXX=$(CXX) cmake . -DCMAKE_BUILD_TYPE=Release -DUSE_VALGRIND=OFF -DTOKU_DEBUG_PARANOID=OFF -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX=/ -DJEMALLOC_SOURCE_DIR=$(PSMSRC)/src/third_party/jemalloc; \
 	make -j$(NJOBS); \
-	make install DESTDIR=$(INSTALLDIR)	
-	
+	make install DESTDIR=$(INSTALLDIR)
+
 RocksDB:
 	cd $(PSMSRC)/src/third_party/rocksdb; \
 	CC=$(CC) CXX=$(CXX) make -j$(NJOBS) static_lib; \
@@ -62,7 +62,7 @@ override_dh_auto_install:
 	dh_auto_install
 	cp -av mongos debian/percona-server-mongodb-mongos/usr/bin
 	cp -av mongo debian/percona-server-mongodb-shell/usr/bin
-	cp -av mongod debian/percona-server-mongodb-server/usr/sbin
+	cp -av mongod debian/percona-server-mongodb-server/usr/bin
 	cp -av debian/percona-server-mongodb-helper.sh debian/percona-server-mongodb-server/usr/bin
 	cp -av debian/mongod.conf debian/percona-server-mongodb-server/etc/mongod.conf
 	cp -av $(PSMSRC)/bin/* debian/percona-server-mongodb-tools/usr/bin
@@ -75,4 +75,3 @@ override_dh_installinit:
 
 override_dh_systemd_enable:
 	dh_systemd_enable --name=mongod
-

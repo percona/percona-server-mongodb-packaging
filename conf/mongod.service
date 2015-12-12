@@ -8,7 +8,7 @@ Group=mongod
 PermissionsStartOnly=true
 EnvironmentFile=/etc/@@LOCATION@@/mongod
 ExecStartPre=/usr/bin/percona-server-mongodb-helper.sh
-ExecStart=/usr/sbin/mongod $OPTIONS run
+ExecStart=/usr/bin/mongod $OPTIONS run
 PIDFile=/var/run/mongod.pid
 
 [Install]

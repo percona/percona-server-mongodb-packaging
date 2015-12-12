@@ -27,7 +27,7 @@ PIDDIR=$(dirname $PIDFILEPATH)
 MONGO_USER=mongod
 MONGO_GROUP=mongod
 
-mongod=${MONGOD:-/usr/sbin/mongod}
+mongod=${MONGOD:-/usr/bin/mongod}
 
 # Handle NUMA access to CPUs (SERVER-3574)
 # This verifies the existence of numactl as well as testing that the command works
