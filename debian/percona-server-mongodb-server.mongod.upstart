@@ -29,7 +29,7 @@ stop on runlevel [06]
 
 script
   ENABLE_MONGOD=yes
-  DAEMON=/usr/sbin/mongod
+  DAEMON=/usr/bin/mongod
   DAEMONUSER=${DAEMONUSER:-mongod}
 
   if [ -f /etc/default/mongod ]; then . /etc/default/mongod; fi
