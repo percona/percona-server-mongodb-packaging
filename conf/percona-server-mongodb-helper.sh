@@ -13,6 +13,9 @@ print_error(){
   echo " * Error disabling Transparent Huge pages, exiting"
   exit 1
 }
+#
+. /etc/@@LOCATION@@/mongod
+#
 # checking if PerconaFT is used looking at defaults file and daemon config
 defaults=$(echo "${OPTIONS}" | egrep -o 'storageEngine.*PerconaFT' | tr -d '[[:blank:]]' | awk -F'=' '{print $NF}' 2>/dev/null)
 config=$(egrep -o '^[[:blank:]]+engine.*PerconaFT' ${CONF} | tr -d '[[:blank:]]' | awk -F':' '{print $NF}' 2>/dev/null)
