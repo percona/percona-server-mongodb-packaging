@@ -48,7 +48,7 @@ start()
 
   touch ${PIDFILEPATH}
   chown ${MONGO_USER} ${PIDFILEPATH}
-  . /usr/bin/percona-server-mongodb-helper.sh
+  /usr/bin/percona-server-mongodb-helper.sh
   # Recommended ulimit values for mongod or mongos
   # See http://docs.mongodb.org/manual/reference/ulimit/#recommended-settings
   #

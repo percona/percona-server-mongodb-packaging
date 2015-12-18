@@ -20,7 +20,7 @@ pre-start script
   mkdir -p /var/run
   touch /var/run/mongod.pid
   chown $DAEMONUSER /var/run/mongod.pid
-  . /usr/bin/percona-server-mongodb-helper.sh
+  /usr/bin/percona-server-mongodb-helper.sh
 #
 end script
 
