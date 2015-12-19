@@ -1,5 +1,5 @@
 #
-%define         mongo_home %{_sharedstatedir}/mongo
+%define         mongo_home /var/lib/mongo
 #
 Name:           Percona-Server-MongoDB
 Version:        @@VERSION@@
