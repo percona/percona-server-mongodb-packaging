@@ -58,7 +58,7 @@ Description: Mongo tools for high-performance MongoDB fork from Percona
 Package: percona-server-mongodb-dbg
 Architecture: any
 Section: debug
-Depends: percona-server-mondodb (= ${binary:Version}), ${misc:Depends}
+Depends: percona-server-mongodb (= ${binary:Version}), ${misc:Depends}
 Description: Debugging package for Percona Server for MongoDB
  Percona Server for MongoDB is a drop-in high-performance replacement for MongoDB from Percona
 
