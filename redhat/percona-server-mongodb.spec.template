@@ -18,6 +18,7 @@ Source5:        mongod.init
 %if 0%{?rhel} < 6
 Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
 %endif
+Source7:        mongod.pp
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
@@ -31,6 +32,11 @@ BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 BuildRequires: gcc, make, cmake, gcc-c++, openssl-devel, cyrus-sasl-devel
 BuildRequires: snappy-devel, zlib-devel, bzip2-devel
 BuildRequires: /usr/bin/scons
+
+# %if 0%{?rhel} >= 6
+# BuildRequires: policycoreutils-python
+# %endif
+
 %if 0%{?rhel} > 5
 BuildRequires: golang
 %endif
@@ -68,6 +74,7 @@ This package contains mongos - the Percona Server for MongoDB sharded cluster qu
 %package server
 Group:          Applications/Databases
 Summary:        Percona Server for MongoDB database server
+Requires: policycoreutils
 %description server
 This package contains the Percona Server for MongoDB server software, default configuration files and init.d scripts
 
@@ -140,7 +147,8 @@ popd
 #
 rm -rf %{buildroot}
 #
-
+install -m 755 -d %{buildroot}/etc/selinux/targeted/modules/active/modules
+install -m 644 %{SOURCE7} %{buildroot}/etc/selinux/targeted/modules/active/modules/
 #
 install -m 755 -d %{buildroot}/%{_bindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}
@@ -197,6 +205,7 @@ cp -av $RPM_BUILD_DIR/mongo-tools-ce5/* %{buildroot}/%{_bindir}/
 %else
 /etc/rc.d/init.d/mongod
 %endif
+/etc/selinux/targeted/modules/active/modules/mongod.pp
 %attr(0750,mongod,mongod) %dir %{mongo_home}
 %attr(0750,mongod,mongod) %dir /var/log/mongo
 %config(noreplace) %{_sysconfdir}/mongod.conf
@@ -244,6 +253,7 @@ fi
 %if 0%{?rhel} >= 7
 %systemd_post mongod.service
 %endif
+/usr/sbin/semodule -i /etc/selinux/targeted/modules/active/modules/mongod.pp
 
 %preun server
 #
