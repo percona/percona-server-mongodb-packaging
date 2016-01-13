@@ -71,7 +71,7 @@ override_dh_strip:
 	dh_strip -a --dbg-package=percona-server-mongodb-dbg
 
 override_dh_installinit:
-	dh_installinit -a --name=mongod
+	dh_installinit -a --no-start --name=mongod
 
 override_dh_systemd_enable:
-	dh_systemd_enable --name=mongod
+	dh_systemd_enable --no-enable --name=mongod
