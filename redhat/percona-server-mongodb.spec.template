@@ -254,6 +254,7 @@ fi
 %systemd_post mongod.service
 %endif
 /usr/sbin/semodule -i /etc/selinux/targeted/modules/active/modules/mongod.pp
+echo " * To start the service, configure your engine and start mongod"
 
 %preun server
 #
