@@ -27,7 +27,6 @@ case "$1" in
       chown -R mongod:mongod /var/lib/mongodb
       chown -R mongod:mongod /var/log/mongodb
       db_set percona-server-mongodb-server/postrm_remove_database false || true
-      echo " * To start the service, configure your engine and start mongod"
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
