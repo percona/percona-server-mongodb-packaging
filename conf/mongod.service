@@ -3,6 +3,7 @@ Description=High-performance, schema-free document-oriented database
 After=time-sync.target network.target
 
 [Service]
+Type=forking
 User=mongod
 Group=mongod
 PermissionsStartOnly=true
