@@ -15,19 +15,17 @@
 # NOTE: if you change any OPTIONS here, you get what you pay for:
 # this script assumes all options are in the config file.
 CONFIGFILE="/etc/mongod.conf"
-OPTIONS=" -f $CONFIGFILE"
+OPTIONS="-f $CONFIGFILE"
 SYSCONFIG="/etc/sysconfig/mongod"
-
-if [ -f "$SYSCONFIG" ]; then
-    . "$SYSCONFIG"
-fi
-
 PIDFILEPATH=/var/run/mongod.pid
 PIDDIR=$(dirname $PIDFILEPATH)
 MONGO_USER=mongod
 MONGO_GROUP=mongod
-
 mongod=${MONGOD:-/usr/bin/mongod}
+
+if [ -f "$SYSCONFIG" ]; then
+    . "$SYSCONFIG"
+fi
 
 # Handle NUMA access to CPUs (SERVER-3574)
 # This verifies the existence of numactl as well as testing that the command works
@@ -42,8 +40,8 @@ fi
 start()
 {
   # Make sure the default pidfile directory exists
-  if [ ! -d $PIDDIR ]; then
-    install -d -m 0755 -o $MONGO_USER -g $MONGO_GROUP $PIDDIR
+  if [ ! -d ${PIDDIR} ]; then
+    install -d -m 0755 -o ${MONGO_USER} -g ${MONGO_GROUP} ${PIDDIR}
   fi
 
   touch ${PIDFILEPATH}
@@ -60,7 +58,7 @@ start()
   ulimit -u 64000
 
   echo -n $"Starting mongod: "
-  daemon --user "$MONGO_USER" --check $mongod "$NUMACTL $mongod $OPTIONS >/dev/null 2>&1"
+  daemon --user "$MONGO_USER" --check ${mongod} "$NUMACTL $mongod $OPTIONS > ${STDOUT} 2> ${STDERR}"
   RETVAL=$?
   echo
   [ $RETVAL -eq 0 ] && touch /var/lock/subsys/mongod
