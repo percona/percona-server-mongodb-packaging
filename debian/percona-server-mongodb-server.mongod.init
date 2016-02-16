@@ -28,8 +28,8 @@
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: An object/document-oriented database
-# Description:       Percona Server for MongoDB is a high-performance, open source, 
-#                    schema-free document-oriented data store that's easy to deploy, 
+# Description:       Percona Server for MongoDB is a high-performance, open source,
+#                    schema-free document-oriented data store that's easy to deploy,
 #                    manage and use. It's network accessible, written in C++ and offers
 #                    the following features:
 #
@@ -61,7 +61,7 @@ ENABLE_MONGOD=yes
 MONGO_USER=${MONGO_USER:-mongod}
 MONGO_GROUP=${MONGO_GROUP:-mongod}
 STARTTIME=1
-DIETIME=10                  
+DIETIME=10
 # Time to wait for the server to die, in seconds
 # If this value is set too low you might not
 # let some servers to die gracefully and
@@ -143,7 +143,7 @@ start_server() {
 
 # Start the process using the wrapper
   /usr/bin/percona-server-mongodb-helper.sh
-  start-stop-daemon -C --background --start --quiet --pidfile $PIDFILEPATH \
+  start-stop-daemon --background --start --quiet --pidfile $PIDFILEPATH \
   --make-pidfile --chuid ${MONGO_USER} \
   --exec ${NUMACTL} ${DAEMON} ${DAEMON_OPTS} > ${STDOUT} 2> ${STDERR}
   errcode=$?
