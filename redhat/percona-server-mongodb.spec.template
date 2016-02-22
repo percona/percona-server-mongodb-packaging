@@ -148,10 +148,8 @@ popd
 #
 rm -rf %{buildroot}
 #
-%if 0%{?rhel} > 5
 install -m 755 -d %{buildroot}/etc/selinux/targeted/modules/active/modules
 install -m 644 %{SOURCE7} %{buildroot}/etc/selinux/targeted/modules/active/modules/
-%endif
 #
 install -m 755 -d %{buildroot}/%{_bindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}
@@ -208,9 +206,7 @@ cp -av $RPM_BUILD_DIR/mongo-tools-ce5/* %{buildroot}/%{_bindir}/
 %else
 /etc/rc.d/init.d/mongod
 %endif
-%if 0%{?rhel} > 5
 /etc/selinux/targeted/modules/active/modules/mongod.pp
-%endif
 %attr(0750,mongod,mongod) %dir %{mongo_home}
 %attr(0750,mongod,mongod) %dir /var/log/mongo
 %config(noreplace) %{_sysconfdir}/mongod.conf
