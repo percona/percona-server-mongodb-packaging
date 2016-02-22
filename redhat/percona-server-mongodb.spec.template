@@ -17,8 +17,9 @@ Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
 %if 0%{?rhel} < 6
 Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
-Source7:        mongod.pp
 %endif
+Source7:        mongod.pp
+
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
 %define         _unpackaged_files_terminate_build 0
