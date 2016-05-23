@@ -9,6 +9,11 @@ if ! getent passwd mongod >/dev/null 2>&1; then
   adduser --system --home /var/lib/mongodb --group mongod
 fi
 
+if [ -e "/etc/init/mongod.conf" ] && [ -d "/var/lib/mongodb" ];
+then
+  mv /etc/init/mongod.conf /var/lib/mongodb/.mongod.conf.orig
+fi
+
 #DEBHELPER#
 
 exit 0
