@@ -34,6 +34,11 @@ if [ "$1" = "purge" ]; then
     rm -rf /var/log/mongodb
     rm -f /var/run/mongod.pid
     userdel mongod || true
+  else
+    if [ -e "/var/lib/mongodb/.mongod.conf.orig" ];
+      then
+        mv /var/lib/mongodb/.mongod.conf.orig /etc/init/mongod.conf
+      fi
   fi
 fi
 
