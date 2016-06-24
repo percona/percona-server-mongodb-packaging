@@ -103,7 +103,7 @@ pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
 mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
 for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do
-  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go;
+  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=${PSMDB_TOOLS_COMMIT_HASH} -X github.com/mongodb/mongo-tools/common/options.VersionStr=${PSMDB_TOOLS_REVISION}" -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go
 done
 popd
 
