@@ -15,10 +15,7 @@ Source2:        mongod.service
 Source3:        mongod.default
 Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
-%if 0%{?rhel} < 6
-Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
-%endif
-Source7:        mongod.pp
+Source6:        mongod.pp
 
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
@@ -37,10 +34,6 @@ BuildRequires: /usr/bin/scons
 # %if 0%{?rhel} >= 6
 # BuildRequires: policycoreutils-python
 # %endif
-
-%if 0%{?rhel} > 5
-BuildRequires: golang
-%endif
 
 Requires: Percona-Server-MongoDB-mongos = %{version}-%{release}
 Requires: Percona-Server-MongoDB-server = %{version}-%{release}
@@ -96,7 +89,7 @@ This package contains various tools from MongoDB project, recompiled for Percona
 %setup -q -n %{src_dir}
 
 %build
-
+export PATH="/usr/local/go/bin:$PATH"
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
 export PORTABLE=1
@@ -104,7 +97,6 @@ export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
 export TOOLS_TAGS="ssl sasl"
 
-%if 0%{?rhel} > 5
 # Mongo Tools compilation
 pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
 . ./set_gopath.sh
@@ -114,7 +106,6 @@ for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore m
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go;
 done
 popd
-%endif
 
 # TokuBackup
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/Percona-TokuBackup/backup
@@ -149,7 +140,7 @@ popd
 rm -rf %{buildroot}
 #
 install -m 755 -d %{buildroot}/etc/selinux/targeted/modules/active/modules
-install -m 644 %{SOURCE7} %{buildroot}/etc/selinux/targeted/modules/active/modules/
+install -m 644 %{SOURCE6} %{buildroot}/etc/selinux/targeted/modules/active/modules/
 #
 install -m 755 -d %{buildroot}/%{_bindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}
@@ -178,9 +169,7 @@ install -m 755 mongo %{buildroot}/%{_bindir}/
 install -m 755 mongod %{buildroot}/%{_bindir}/
 install -m 755 mongos %{buildroot}/%{_bindir}/
 
-%if 0%{?rhel} > 5
 install -m 755 $RPM_BUILD_DIR/%{src_dir}/bin/* %{buildroot}/%{_bindir}/
-%endif
 
 install -m 644 $RPM_BUILD_DIR/%{src_dir}/manpages/* %{buildroot}/%{_mandir}/man1/
 
