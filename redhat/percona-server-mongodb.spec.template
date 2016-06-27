@@ -15,10 +15,7 @@ Source2:        mongod.service
 Source3:        mongod.default
 Source4:        percona-server-mongodb-helper.sh
 Source5:        mongod.init
-#%if 0%{?rhel} < 6
-#Source6:        http://jenkins.percona.com/downloads/mongo-tools-ce5.tar.gz
-#%endif
-Source7:        mongod.pp
+Source6:        mongod.pp
 
 BuildRoot:      /var/tmp/%{name}-%{version}-%{release}
 %undefine       _missing_build_ids_terminate_build
@@ -36,10 +33,6 @@ BuildRequires: /usr/bin/scons
 
 # %if 0%{?rhel} >= 6
 # BuildRequires: policycoreutils-python
-# %endif
-
-# %if 0%{?rhel} > 5
-# BuildRequires: golang
 # %endif
 
 Requires: Percona-Server-MongoDB-mongos = %{version}-%{release}
@@ -96,7 +89,7 @@ This package contains various tools from MongoDB project, recompiled for Percona
 %setup -q -n %{src_dir}
 
 %build
-
+export PATH="/usr/local/go/bin:$PATH"
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
 export PORTABLE=1
@@ -104,6 +97,17 @@ export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
 export TOOLS_TAGS="ssl sasl"
 export PATH=/usr/local/go/bin:$PATH
+
+# Mongo Tools compilation
+pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
+. ./set_gopath.sh
+rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
+mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
+for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do
+  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=${PSMDB_TOOLS_COMMIT_HASH} -X github.com/mongodb/mongo-tools/common/options.VersionStr=${PSMDB_TOOLS_REVISION}" -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go
+done
+popd
+>>>>>>> upstream/master
 
 # TokuBackup
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/Percona-TokuBackup/backup
@@ -149,7 +153,7 @@ popd
 rm -rf %{buildroot}
 #
 install -m 755 -d %{buildroot}/etc/selinux/targeted/modules/active/modules
-install -m 644 %{SOURCE7} %{buildroot}/etc/selinux/targeted/modules/active/modules/
+install -m 644 %{SOURCE6} %{buildroot}/etc/selinux/targeted/modules/active/modules/
 #
 install -m 755 -d %{buildroot}/%{_bindir}
 install -m 755 -d %{buildroot}/%{_sysconfdir}

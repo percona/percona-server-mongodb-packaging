@@ -2,6 +2,7 @@
 #
 export DH_VERBOSE=1
 export DEB_BUILD_HARDENING=1
+export PATH := /usr/local/go/bin:$(PATH)
 export NJOBS=$(shell grep -c processor /proc/cpuinfo)
 export PSM_TARGETS=mongod mongos mongo
 export PSMSRC=$(CURDIR)
