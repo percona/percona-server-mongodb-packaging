@@ -89,7 +89,6 @@ This package contains various tools from MongoDB project, recompiled for Percona
 %setup -q -n %{src_dir}
 
 %build
-export PATH="/usr/local/go/bin:$PATH"
 export CC=${CC:-gcc}
 export CXX=${CXX:-g++}
 export PORTABLE=1
@@ -97,16 +96,6 @@ export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
 export TOOLS_TAGS="ssl sasl"
 export PATH=/usr/local/go/bin:$PATH
-
-# Mongo Tools compilation
-pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
-. ./set_gopath.sh
-rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
-mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
-for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do
-  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=${PSMDB_TOOLS_COMMIT_HASH} -X github.com/mongodb/mongo-tools/common/options.VersionStr=${PSMDB_TOOLS_REVISION}" -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go
-done
-popd
 
 # TokuBackup
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/Percona-TokuBackup/backup
