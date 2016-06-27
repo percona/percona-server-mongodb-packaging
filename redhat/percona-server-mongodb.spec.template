@@ -96,6 +96,7 @@ export PORTABLE=1
 export PSM_TARGETS="mongod mongos mongo"
 export INSTALLDIR=$RPM_BUILD_DIR/install
 export TOOLS_TAGS="ssl sasl"
+export PATH=/usr/local/go/bin:$PATH
 
 # Mongo Tools compilation
 pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
@@ -133,6 +134,17 @@ pushd $RPM_BUILD_DIR/%{src_dir}
 scons --variant-dir=percona --audit --release --ssl --opt=on --cc=${CC} --cxx=${CXX} \
 %{?_smp_mflags} --use-sasl-client CPPPATH=${INSTALLDIR}/include LIBPATH=${INSTALLDIR}/lib \
 --PerconaFT --rocksdb --wiredtiger --tokubackup $PSM_TARGETS
+popd
+
+# Mongo Tools compilation
+pushd $RPM_BUILD_DIR/%{src_dir}/mongo-tools
+. ./set_gopath.sh
+. ./set_tools_revision.sh
+rm -rf $RPM_BUILD_DIR/%{src_dir}/mongo-tools/vendor/pkg
+mkdir -p $RPM_BUILD_DIR/%{src_dir}/bin
+for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog; do
+  go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=${PSMDB_TOOLS_COMMIT_HASH} -X github.com/mongodb/mongo-tools/common/options.VersionStr=${PSMDB_TOOLS_REVISION}" -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go
+done
 popd
 
 %install

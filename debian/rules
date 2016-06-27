@@ -10,6 +10,7 @@ export MONGOTOOLS=bsondump mongostat mongofiles mongoexport mongoimport mongores
 export INSTALLDIR=$(PSMSRC)/install
 export PORTABLE=1
 export TOOLS_TAGS=ssl sasl
+export PATH := /usr/local/go/bin:$(PATH)
 CC = gcc-4.8
 CXX = g++-4.8
 #
@@ -58,7 +59,7 @@ compile-mongo-tools:
 	        go build -a -o $(PSMSRC)/bin/$$tool -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=$$PSMDB_TOOLS_COMMIT_HASH -X github.com/mongodb/mongo-tools/common/options.VersionStr=$$PSMDB_TOOLS_REVISION" -tags "$(TOOLS_TAGS)" $(PSMSRC)/mongo-tools/$$tool/main/$$tool.go; \
 	done
 
-build: compile-mongo-tools PerconaFT RocksDB TokuBackup percona-server-mongodb
+build: PerconaFT RocksDB TokuBackup percona-server-mongodb compile-mongo-tools
 
 override_dh_auto_install:
 	dh_auto_install
