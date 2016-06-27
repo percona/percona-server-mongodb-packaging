@@ -107,7 +107,6 @@ for tool in bsondump mongostat mongofiles mongoexport mongoimport mongorestore m
   go build -a -x -o $RPM_BUILD_DIR/%{src_dir}/bin/${tool} -ldflags "-X github.com/mongodb/mongo-tools/common/options.Gitspec=${PSMDB_TOOLS_COMMIT_HASH} -X github.com/mongodb/mongo-tools/common/options.VersionStr=${PSMDB_TOOLS_REVISION}" -tags "${TOOLS_TAGS}" $RPM_BUILD_DIR/%{src_dir}/mongo-tools/${tool}/main/${tool}.go
 done
 popd
->>>>>>> upstream/master
 
 # TokuBackup
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/Percona-TokuBackup/backup
