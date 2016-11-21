@@ -114,7 +114,7 @@ popd
 
 # RocksDB
 pushd $RPM_BUILD_DIR/%{src_dir}/src/third_party/rocksdb
-%{__make} %{?_smp_mflags} static_lib
+%{__make} OPT=-ULZ4 %{?_smp_mflags} static_lib
 %{__make} install-static INSTALL_PATH=${INSTALLDIR}
 popd
 

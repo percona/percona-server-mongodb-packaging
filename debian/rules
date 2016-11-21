@@ -40,7 +40,7 @@ PerconaFT:
 
 RocksDB:
 	cd $(PSMSRC)/src/third_party/rocksdb; \
-	CC=$(CC) CXX=$(CXX) make -j$(NJOBS) static_lib; \
+	CC=$(CC) CXX=$(CXX) make OPT=-ULZ4 -j$(NJOBS) static_lib; \
 	make install-static INSTALL_PATH=$(INSTALLDIR)
 
 # Finally PSfMDB
